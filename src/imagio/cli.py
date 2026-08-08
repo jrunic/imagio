@@ -291,13 +291,22 @@ def atualizar() -> None:
 
     referencia = os.getenv("IMAGIO_VERSAO", _REFERENCIA_PADRAO)
     alvo = f"git+{_URL_REPO}@{referencia}"
-    console.print(f"[dim]→ pipx install --force {alvo}[/dim]")
 
-    resultado = subprocess.run(["pipx", "install", "--force", alvo], check=False)
+    # Desinstalar antes de instalar, em vez de `pipx install --force`: o backend uv
+    # recusa criar ambiente sobre um que já existe e não foi criado na mesma sessão,
+    # e o pipx sai com código 1 sem atualizar nada. Duas etapas funcionam em todos os
+    # casos, inclusive quando a referência muda.
+    console.print(f"[dim]→ pipx uninstall imagio && pipx install {alvo}[/dim]")
+
+    subprocess.run(["pipx", "uninstall", "imagio"], check=False)
+
+    resultado = subprocess.run(["pipx", "install", alvo], check=False)
     if resultado.returncode != 0:
         console.print(
-            "[red]Erro:[/red] a reinstalação falhou. Se o `imagio` foi instalado "
-            "por outro meio que não o pipx, atualize por esse mesmo meio."
+            "[red]Erro:[/red] a instalação falhou e o `imagio` foi removido.\n"
+            f"Para recuperar, rode: [bold]pipx install {alvo}[/bold]\n"
+            "Se o `imagio` havia sido instalado por outro meio que não o pipx, "
+            "atualize por esse mesmo meio."
         )
         raise typer.Exit(code=1)
 

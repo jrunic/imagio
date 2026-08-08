@@ -132,9 +132,11 @@ def test_atualizar_reporta_pipx_ausente(monkeypatch):
     assert "pipx" in resultado.stdout
 
 
-def _captura_subprocess(monkeypatch, capturado):
+def _captura_subprocess(monkeypatch, comandos):
+    """Registra toda chamada a subprocess.run, em ordem."""
+
     def falso_run(comando, **kwargs):
-        capturado["comando"] = comando
+        comandos.append(comando)
 
         class Resultado:
             returncode = 0
@@ -145,12 +147,31 @@ def _captura_subprocess(monkeypatch, capturado):
     monkeypatch.setattr("subprocess.run", falso_run)
 
 
-def test_atualizar_usa_o_canal_de_release_por_padrao(monkeypatch):
-    capturado: dict = {}
-    _captura_subprocess(monkeypatch, capturado)
+def test_atualizar_desinstala_antes_de_instalar(monkeypatch):
+    """`pipx install --force` não substitui venv existente — o backend uv recusa.
+
+    Verificado em 2026-08-08 contra o repositório público: o comando sai com
+    código 1 e a mensagem 'A virtual environment already exists'. A sequência que
+    funciona é desinstalar e instalar.
+    """
+    comandos: list = []
+    _captura_subprocess(monkeypatch, comandos)
     resultado = runner.invoke(app, ["atualizar"])
     assert resultado.exit_code == 0
-    alvo = capturado["comando"][-1]
+    assert len(comandos) == 2, f"esperado desinstalar + instalar, veio {comandos}"
+    assert comandos[0][:2] == ["pipx", "uninstall"]
+    assert comandos[1][:2] == ["pipx", "install"]
+    assert "--force" not in comandos[1], (
+        "--force é justamente o que não funciona sobre venv existente"
+    )
+
+
+def test_atualizar_usa_o_canal_de_release_por_padrao(monkeypatch):
+    comandos: list = []
+    _captura_subprocess(monkeypatch, comandos)
+    resultado = runner.invoke(app, ["atualizar"])
+    assert resultado.exit_code == 0
+    alvo = comandos[-1][-1]
     assert alvo.endswith("@production"), (
         "o padrão precisa ser o mesmo ramo que a distribuição automática segue, "
         "senão os dois "
@@ -160,11 +181,27 @@ def test_atualizar_usa_o_canal_de_release_por_padrao(monkeypatch):
 
 
 def test_atualizar_respeita_referencia_fixada(monkeypatch):
-    capturado: dict = {}
-    _captura_subprocess(monkeypatch, capturado)
+    comandos: list = []
+    _captura_subprocess(monkeypatch, comandos)
     monkeypatch.setenv("IMAGIO_VERSAO", "v1.2.3")
     runner.invoke(app, ["atualizar"])
-    assert capturado["comando"][-1].endswith("@v1.2.3")
+    assert comandos[-1][-1].endswith("@v1.2.3")
+
+
+def test_atualizar_falha_se_a_instalacao_falhar(monkeypatch):
+    """Desinstalar e falhar ao instalar deixa o usuário sem o binário — precisa gritar."""
+
+    def falso_run(comando, **kwargs):
+        class Resultado:
+            returncode = 0 if comando[1] == "uninstall" else 1
+
+        return Resultado()
+
+    monkeypatch.setattr("shutil.which", lambda nome: f"/usr/bin/{nome}")
+    monkeypatch.setattr("subprocess.run", falso_run)
+    resultado = runner.invoke(app, ["atualizar"])
+    assert resultado.exit_code == 1
+    assert "pipx install" in resultado.stdout, "a mensagem precisa dar o comando de resgate"
 
 
 def test_ajuda_lista_os_cinco_verbos():
