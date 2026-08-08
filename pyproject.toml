@@ -1,0 +1,69 @@
+[build-system]
+# setuptools>=77 é o mínimo para `license` como expressão SPDX (PEP 639).
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "imagio"
+version = "0.1.0"
+description = "Gera imagens a partir de texto, pela linha de comando"
+requires-python = ">=3.12"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Orlando Ferreira" }]
+keywords = ["imagem", "geracao-de-imagem", "gemini", "minimax", "cli", "ia"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Natural Language :: Portuguese (Brazilian)",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Graphics",
+]
+dependencies = [
+    "typer>=0.12",
+    "rich>=13",
+    "google-genai>=1.0",          # SDK oficial do Gemini
+    "requests>=2.31",             # MiniMax REST direto
+    "tomli-w>=1.0",               # escrita do config.toml (ver docs/81-referencia/decisoes/)
+    "pillow>=10.0",               # conversão de formato (PNG ↔ JPG ↔ WEBP)
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.5",
+    "responses>=0.25",            # mock de requests para testes de backend
+    "mypy>=1.10",
+]
+
+[project.scripts]
+# Entry point do CLI. Após `pipx install`, vira `imagio` no PATH.
+imagio = "imagio.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/jrunic/imagio"
+Repository = "https://github.com/jrunic/imagio"
+Issues = "https://github.com/jrunic/imagio/issues"
+Changelog = "https://github.com/jrunic/imagio/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008"]  # typer.Option() em default de função é idiomático
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true

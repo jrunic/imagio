@@ -1,0 +1,64 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Ambiente virtual (criado por `pip install -e ".[dev]"`) ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Testes / cache de tooling ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cache
+
+# --- IDE / editor ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+*~
+
+# --- Agentes de código (config local, não pertence ao repositório) ---
+.claude/
+
+# --- Índices gerados por ferramenta externa ao repositório ---
+docs/81-referencia/INDEX-*.md
+
+# --- Imagens geradas (não commitar outputs do CLI) ---
+generated/
+*.tmp.png
+*.tmp.jpg
+*.tmp.webp
+
+# --- Secrets locais (defesa em profundidade) ---
+.env
+.env.local
+*.secret
+secrets/
