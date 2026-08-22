@@ -245,3 +245,7 @@ saída estruturada, e cada ramo da cascata de precedência.
 - `output_mime_type` **não é suportado** no modo Developer API. Não usar em `ImageConfig`.
 - A chave do AI Studio é pré-paga e distinta do faturamento regular do Google Cloud.
   Geração de imagem exige créditos pré-pagos ou chave criada no console do Cloud.
+
+## Restrições
+
+- **Repositório público não nomeia a árvore interna do autor** — nem em documento de trabalho, nem em comentário, nem no texto que documenta essa própria regra. Sem caminho absoluto, sem nome de cliente, sem estrutura de pastas interna. Varredura antes de todo push: `git log -p origin/<branch>..HEAD`. ADR `20260822-repo-declara-onde-o-trabalho-acontece` (decisão 5).
