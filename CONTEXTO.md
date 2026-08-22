@@ -15,26 +15,24 @@ Padrões de implementação deste repositório. Para o que o `imagio` é e como 
 ver o `README.md` e `docs/81-referencia/`.
 ## Onde o trabalho acontece
 
-**Pasta de trabalho:** `14-projetos/20260807-cria-imagio` — é lá que a sessão de desenvolvimento abre
-(`jd-claude <agente> cria-imagio`). Quando existe pasta de trabalho, o trabalho é
-feito nela; este repo recebe o que a audiência dele precisa.
+**O trabalho de desenvolvimento acontece fora deste repositório**, nos documentos
+internos do autor — é lá que a sessão abre (`jd-claude <agente> cria-imagio`).
 
 | Artefato | Lar canônico |
 |---|---|
-| Roadmap de ciclos (`roadmap.md`) | pasta de trabalho |
-| Spec (`dev-02`) e plano (`dev-03`) | pasta de trabalho, em `11-tarefas/` |
-| Arquivo de apoio de tarefa | pasta de trabalho, em `11-tarefas/` |
-| Diário de sessão | pasta de trabalho, em `91-diario/` |
-| Discussão de negócio, modelo de domínio, glossário | pasta de trabalho |
-| **Código, testes, migrations** | **este repo** |
-| **Documentação do produto** (Diátaxis) | **este repo**, `docs/81-referencia/` |
-| **ADR de contrato da ferramenta** | **este repo**, `docs/81-referencia/decisoes/` |
-| **README, CHANGELOG** | **este repo** |
+| Roadmap de ciclos, spec, plano | fora deste repositório |
+| Arquivo de apoio de tarefa, diário de sessão | fora deste repositório |
+| Discussão de negócio, modelo de domínio, glossário | fora deste repositório |
+| **Código, testes, migrations** | **este repositório** |
+| **Documentação do produto** (Diátaxis) | **este repositório**, `docs/81-referencia/` |
+| **ADR de contrato da ferramenta** | **este repositório**, `docs/81-referencia/decisoes/` |
+| **README, CHANGELOG** | **este repositório** |
 
-**Razão:** spec, plano, roadmap e diário são internos — nomeiam cliente, caminho
-do brain e comando de migração. ADR `20260809-spec-e-plano-fora-do-repo-publico`.
+**Razão:** spec, plano, roadmap e diário são documentos operacionais internos —
+nomeiam contexto que não pertence a um repositório aberto. O repositório carrega
+o que a audiência dele precisa.
 
-**As skills leem esta seção** em vez de inferir por visibilidade do repo. Repo
+**As skills leem esta seção** em vez de inferir por visibilidade. Repositório
 que não declara deixa a skill sem informação, e sem informação ela erra.
 
 ## Propósito
