@@ -167,6 +167,6 @@ O verificador de tipos é quem pega divergência entre sua classe e o protocolo 
 
 ## Se o provedor exigir biblioteca nova
 
-Registre um ADR em `docs/81-referencia/decisoes/` antes de acrescentá-la ao
+Registre um ADR em `docs/decisoes/` antes de acrescentá-la ao
 `pyproject.toml`. Toda dependência nova exige decisão escrita, com as alternativas
 rejeitadas.

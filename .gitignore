@@ -49,7 +49,7 @@ htmlcov/
 .claude/
 
 # --- Índices gerados por ferramenta externa ao repositório ---
-docs/81-referencia/INDEX-*.md
+docs/INDEX-*.md
 
 # --- Imagens geradas (não commitar outputs do CLI) ---
 generated/

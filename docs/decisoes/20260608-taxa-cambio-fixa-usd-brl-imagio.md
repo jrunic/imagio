@@ -44,7 +44,7 @@ Opção 3: `IMAGIO_USD_BRL` (env var, default `6.0`) lida em `output.usd_to_brl(
 **Negativas:**
 
 - A taxa fica desatualizada silenciosamente. Mitigação: `lookup_cost()` retorna 0.0 para chave ausente na tabela `PRICING`, e a linha de summary pode sinalizar visualmente quando o custo USD está tabelado mas a taxa BRL está defasada (feature futura, fora do MVP).
-- Custo reportado ≠ preço cobrado real (a fatura do provedor cobra em USD; convertemos por estimativa). Documentado no `output.py` e em `docs/81-referencia/restricoes.md`.
+- Custo reportado ≠ preço cobrado real (a fatura do provedor cobra em USD; convertemos por estimativa). Documentado no `output.py` e em `docs/restricoes.md`.
 
 ## Alternativas rejeitadas
 

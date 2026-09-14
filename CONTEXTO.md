@@ -12,7 +12,7 @@ descricao: Contexto técnico e padrões de implementação do CLI imagio
 # CONTEXTO.md — imagio
 
 Padrões de implementação deste repositório. Para o que o `imagio` é e como usá-lo,
-ver o `README.md` e `docs/81-referencia/`.
+ver o `README.md` e `docs/`.
 ## Onde o trabalho acontece
 
 **O trabalho de desenvolvimento acontece fora deste repositório**, nos
@@ -118,7 +118,7 @@ diretamente.
 
 ## Bibliotecas
 
-Biblioteca nova exige ADR em `docs/81-referencia/decisoes/`.
+Biblioteca nova exige ADR em `docs/decisoes/`.
 
 - **Produção:** `typer`, `rich`, `google-genai`, `requests`, `tomli-w`, `pillow`
 - **Desenvolvimento:** `pytest`, `pytest-asyncio`, `ruff`, `responses`, `mypy`
@@ -224,10 +224,10 @@ saída estruturada, e cada ramo da cascata de precedência.
 - [ ] Backend novo implementa o `Protocol Backend`, se auto-registra e traduz erros
 - [ ] Tabela de preços atualizada se entrou backend, modelo ou tamanho novo
 - [ ] `default_model` conferido contra a documentação oficial do provedor
-- [ ] Variável de ambiente nova documentada em `docs/81-referencia/referencias/configuracao.md`
+- [ ] Variável de ambiente nova documentada em `docs/referencias/configuracao.md`
 - [ ] Códigos de saída respeitados
 - [ ] Mensagem de erro do CLI em português
-- [ ] Biblioteca nova tem ADR em `docs/81-referencia/decisoes/`
+- [ ] Biblioteca nova tem ADR em `docs/decisoes/`
 - [ ] `CONTEXTO.md` atualizado se o padrão técnico mudou
 
 ## Débito conhecido
