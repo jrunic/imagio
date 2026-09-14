@@ -70,3 +70,4 @@ docs/**/INDEX-*.md
 # Entry file de ferramenta — gerado pelo mecanismo de carga, com caminho
 # absoluto da máquina. Não pertence ao repositório.
 CLAUDE.md
+GEMINI.md
