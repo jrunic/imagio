@@ -62,3 +62,7 @@ generated/
 .env.local
 *.secret
 secrets/
+
+# INDEX-<dominio>.md sao gerados pelo jedi-gera-indice-referencia
+docs/INDEX-*.md
+docs/**/INDEX-*.md
