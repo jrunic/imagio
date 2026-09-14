@@ -66,3 +66,7 @@ secrets/
 # INDEX-<dominio>.md sao gerados pelo jedi-gera-indice-referencia
 docs/INDEX-*.md
 docs/**/INDEX-*.md
+
+# Entry file de ferramenta — gerado pelo mecanismo de carga, com caminho
+# absoluto da máquina. Não pertence ao repositório.
+CLAUDE.md
