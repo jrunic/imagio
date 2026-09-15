@@ -81,13 +81,13 @@ provedor. Falha de rede e limite de taxa geram duas novas tentativas no mesmo ba
 
 ## Documentação
 
-- [Sua primeira imagem](docs/81-referencia/tutoriais/primeira-imagem.md) — do zero ao primeiro arquivo
-- [Como instalar](docs/81-referencia/guias/instalar.md) — instalar, atualizar, fixar versão
-- [Como adicionar um backend](docs/81-referencia/guias/adicionar-backend.md)
-- [Referência da CLI](docs/81-referencia/referencias/cli.md) — verbos, opções, códigos de saída
-- [Referência de configuração](docs/81-referencia/referencias/configuracao.md)
-- [Visão geral](docs/81-referencia/explicacoes/visao-geral.md) — o quê, para quem, por que é assim
-- [Precedência de configuração](docs/81-referencia/explicacoes/precedencia-de-configuracao.md)
+- [Sua primeira imagem](docs/tutoriais/primeira-imagem.md) — do zero ao primeiro arquivo
+- [Como instalar](docs/guias/instalar.md) — instalar, atualizar, fixar versão
+- [Como adicionar um backend](docs/guias/adicionar-backend.md)
+- [Referência da CLI](docs/referencias/cli.md) — verbos, opções, códigos de saída
+- [Referência de configuração](docs/referencias/configuracao.md)
+- [Visão geral](docs/explicacoes/visao-geral.md) — o quê, para quem, por que é assim
+- [Precedência de configuração](docs/explicacoes/precedencia-de-configuracao.md)
 
 ## Ressalvas conhecidas
 

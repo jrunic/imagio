@@ -39,7 +39,7 @@ Mapa de navegação. Aponta para onde cada coisa vive; o conteúdo está nos des
 | Quais são os comandos, flags e códigos de saída? | [`referencias/cli.md`](referencias/cli.md) |
 | Quais variáveis e chaves de configuração existem? | [`referencias/configuracao.md`](referencias/configuracao.md) |
 | Por que decidiram assim? | [`decisoes/`](decisoes/) |
-| Quais os padrões para mexer no código? | [`../../CONTEXTO.md`](../../CONTEXTO.md) |
+| Quais os padrões para mexer no código? | [`../CONTEXTO.md`](../CONTEXTO.md) |
 
 ## Forma do sistema
 

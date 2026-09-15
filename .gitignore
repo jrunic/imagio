@@ -49,7 +49,7 @@ htmlcov/
 .claude/
 
 # --- Índices gerados por ferramenta externa ao repositório ---
-docs/81-referencia/INDEX-*.md
+docs/INDEX-*.md
 
 # --- Imagens geradas (não commitar outputs do CLI) ---
 generated/
@@ -62,3 +62,12 @@ generated/
 .env.local
 *.secret
 secrets/
+
+# INDEX-<dominio>.md sao gerados pelo jedi-gera-indice-referencia
+docs/INDEX-*.md
+docs/**/INDEX-*.md
+
+# Entry file de ferramenta — gerado pelo mecanismo de carga, com caminho
+# absoluto da máquina. Não pertence ao repositório.
+CLAUDE.md
+GEMINI.md

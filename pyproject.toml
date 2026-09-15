@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "imagio"
-version = "0.1.0"
+version = "0.1.1"
 description = "Gera imagens a partir de texto, pela linha de comando"
 requires-python = ">=3.12"
 readme = "README.md"
@@ -26,7 +26,7 @@ dependencies = [
     "rich>=13",
     "google-genai>=1.0",          # SDK oficial do Gemini
     "requests>=2.31",             # MiniMax REST direto
-    "tomli-w>=1.0",               # escrita do config.toml (ver docs/81-referencia/decisoes/)
+    "tomli-w>=1.0",               # escrita do config.toml (ver docs/decisoes/)
     "pillow>=10.0",               # conversão de formato (PNG ↔ JPG ↔ WEBP)
 ]
 

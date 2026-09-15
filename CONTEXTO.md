@@ -12,7 +12,27 @@ descricao: Contexto técnico e padrões de implementação do CLI imagio
 # CONTEXTO.md — imagio
 
 Padrões de implementação deste repositório. Para o que o `imagio` é e como usá-lo,
-ver o `README.md` e `docs/81-referencia/`.
+ver o `README.md` e `docs/`.
+## Onde o trabalho acontece
+
+**O trabalho de desenvolvimento acontece fora deste repositório**, nos
+documentos internos do autor.
+
+| Artefato | Lar canônico |
+|---|---|
+| Roadmap de ciclos, spec, plano | fora deste repositório |
+| Arquivo de apoio de tarefa, diário de sessão | fora deste repositório |
+| Discussão de negócio | fora deste repositório |
+| **Código, testes, migrations** | **este repositório** |
+| **Documentação do produto** (Diátaxis) | **este repositório**, `docs/` |
+| **ADR de contrato** | **este repositório**, `docs/decisoes/` |
+| **Modelo de domínio** | **este repositório**, `docs/dominio/` |
+| **README, CHANGELOG, GLOSSARIO, CONTEXTO** | **este repositório**, raiz |
+
+**Razão:** spec, plano, roadmap e diário nomeiam contexto que não pertence a um
+repositório aberto. O repositório carrega o que a audiência dele precisa.
+
+**As skills leem esta seção** em vez de inferir por visibilidade.
 
 ## Propósito
 
@@ -98,7 +118,7 @@ diretamente.
 
 ## Bibliotecas
 
-Biblioteca nova exige ADR em `docs/81-referencia/decisoes/`.
+Biblioteca nova exige ADR em `docs/decisoes/`.
 
 - **Produção:** `typer`, `rich`, `google-genai`, `requests`, `tomli-w`, `pillow`
 - **Desenvolvimento:** `pytest`, `pytest-asyncio`, `ruff`, `responses`, `mypy`
@@ -204,10 +224,10 @@ saída estruturada, e cada ramo da cascata de precedência.
 - [ ] Backend novo implementa o `Protocol Backend`, se auto-registra e traduz erros
 - [ ] Tabela de preços atualizada se entrou backend, modelo ou tamanho novo
 - [ ] `default_model` conferido contra a documentação oficial do provedor
-- [ ] Variável de ambiente nova documentada em `docs/81-referencia/referencias/configuracao.md`
+- [ ] Variável de ambiente nova documentada em `docs/referencias/configuracao.md`
 - [ ] Códigos de saída respeitados
 - [ ] Mensagem de erro do CLI em português
-- [ ] Biblioteca nova tem ADR em `docs/81-referencia/decisoes/`
+- [ ] Biblioteca nova tem ADR em `docs/decisoes/`
 - [ ] `CONTEXTO.md` atualizado se o padrão técnico mudou
 
 ## Débito conhecido
@@ -224,3 +244,7 @@ saída estruturada, e cada ramo da cascata de precedência.
 - `output_mime_type` **não é suportado** no modo Developer API. Não usar em `ImageConfig`.
 - A chave do AI Studio é pré-paga e distinta do faturamento regular do Google Cloud.
   Geração de imagem exige créditos pré-pagos ou chave criada no console do Cloud.
+
+## Restrições
+
+- **Repositório público não nomeia a árvore interna do autor** — nem em documento de trabalho, nem em comentário, nem no texto que documenta essa própria regra. Sem caminho absoluto, sem nome de cliente, sem estrutura de pastas interna. Varredura antes de todo push: `git log -p origin/<branch>..HEAD`. ADR `20260822-repo-declara-onde-o-trabalho-acontece` (decisão 5).
