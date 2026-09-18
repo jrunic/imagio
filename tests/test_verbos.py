@@ -19,6 +19,42 @@ def ambiente_limpo(monkeypatch, tmp_path):
     yield
 
 
+class _FakeBackendVerbos:
+    """Mesma forma do `_FakeBackend` de test_cli.py — duplicado aqui de
+    propósito: test_verbos.py testa a cascata vista de fora, não quer
+    depender de um fixture definido em outro arquivo de teste."""
+
+    name = "fake"
+    default_model = "fake-model-v1"
+
+    async def generate(self, *, prompt, model, width, height):
+        import io
+
+        from PIL import Image
+
+        from imagio.backends.base import GeneratedImage
+
+        buf = io.BytesIO()
+        Image.new("RGB", (1, 1), color="blue").save(buf, format="PNG")
+        return GeneratedImage(
+            image_bytes=buf.getvalue(),
+            mime_type="image/png",
+            width=width,
+            height=height,
+            cost_usd=0.0,
+        )
+
+
+@pytest.fixture
+def fake_backend_verbos(monkeypatch):
+    from imagio.backends import registry
+
+    fake = _FakeBackendVerbos()
+    monkeypatch.setitem(registry._REGISTRY, "fake", fake)  # noqa: SLF001
+    yield fake
+    registry._REGISTRY.pop("fake", None)  # noqa: SLF001
+
+
 def test_backend_do_arquivo_e_usado_quando_nao_ha_flag_nem_env():
     config.salvar({"backend": "inexistente-no-registry"})
     resultado = runner.invoke(app, ["gerar", "x", "-o", "/tmp/x.png"])
@@ -209,3 +245,38 @@ def test_ajuda_lista_os_cinco_verbos():
     saida = resultado.stdout
     for verbo in ("gerar", "configurar", "instalar", "atualizar", "versao"):
         assert verbo in saida, f"verbo '{verbo}' ausente da ajuda"
+
+
+def test_gerar_usa_tabela_remota_quando_disponivel(fake_backend_verbos, monkeypatch, tmp_path):
+    from imagio import pricing_remoto
+
+    def sucesso(*, etag, last_modified):
+        return pricing_remoto._RespostaHTTP(
+            mudou=True,
+            corpo={
+                "schema_version": 1,
+                "flat": {"fake": {"fake-model-v1": 99.0}},
+                "by_size": {},
+            },
+            etag='"v1"',
+            last_modified=None,
+        )
+
+    monkeypatch.setattr(pricing_remoto, "_fazer_requisicao_condicional", sucesso)
+
+    resultado = runner.invoke(
+        app,
+        ["gerar", "x", "-o", str(tmp_path / "x.png"), "--backend", "fake", "--json"],
+    )
+    assert resultado.exit_code == 0
+    assert '"cost_usd": 99.0' in resultado.stdout
+
+
+def test_gerar_json_e_deterministico_sem_refresh_no_meio(fake_backend_verbos, tmp_path):
+    args = ["gerar", "x", "-o", str(tmp_path / "x.png"), "--backend", "fake", "--json"]
+    primeiro = runner.invoke(app, args)
+    segundo = runner.invoke(app, args)
+    assert primeiro.exit_code == segundo.exit_code == 0
+    import json as jsonlib
+
+    assert jsonlib.loads(primeiro.stdout)["cost_usd"] == jsonlib.loads(segundo.stdout)["cost_usd"]

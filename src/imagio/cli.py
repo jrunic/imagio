@@ -18,6 +18,7 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
+from imagio import pricing_remoto
 from imagio.backends import get_backend
 from imagio.backends.base import SizeNotSupportedError
 from imagio.config import carregar, resolver_preferencia, salvar
@@ -125,8 +126,15 @@ def gerar(  # noqa: PLR0913 — CLI tem várias flags por design
 
     modelo_usado = modelo or backend_impl.default_model
 
-    # Custo estimado é consultado localmente — sem chamada extra à API.
-    cost_usd = lookup_cost(backend, modelo_usado, width, height)
+    resultado_precos = pricing_remoto.obter_tabelas()
+    cost_usd = lookup_cost(
+        backend,
+        modelo_usado,
+        width,
+        height,
+        flat=resultado_precos.flat,
+        by_size=resultado_precos.by_size,
+    )
     cost_brl = usd_to_brl(cost_usd)
 
     # Linha de progresso: omitida em modo --json para manter stdout parseável.
