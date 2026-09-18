@@ -64,6 +64,26 @@ def test_save_image_png_para_jpg_converte(tmp_path):
     assert img.format == "JPEG"
 
 
+def test_save_image_webp_para_png_converte(tmp_path):
+    """Backend devolve mime diferente de PNG (ex.: WEBP), formato alvo PNG →
+    Pillow re-codifica em vez de estourar ValueError."""
+    out = tmp_path / "a.png"
+    img = Image.new("RGB", (4, 4), color="red")
+    buf = io.BytesIO()
+    img.save(buf, format="WEBP")
+    image = GeneratedImage(
+        image_bytes=buf.getvalue(),
+        mime_type="image/webp",
+        width=4,
+        height=4,
+        cost_usd=0.0,
+    )
+    save_image(image, out, "png")
+    assert out.exists()
+    saved = Image.open(out)
+    assert saved.format == "PNG"
+
+
 def test_save_image_ja_existia_avisa(tmp_path, capsys):
     """Arquivo pré-existente → sobrescreve + aviso em stderr."""
     out = tmp_path / "a.png"

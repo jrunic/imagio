@@ -234,8 +234,10 @@ saída estruturada, e cada ramo da cascata de precedência.
 
 - **MiniMax nunca foi validado contra a API real.** O backend está implementado com
   tratamento de `base_resp`, mas nenhuma geração de verdade foi confirmada.
-- **Modelos Gemini 3.x não estão na tabela de preços.** Só `gemini-2.5-flash-image`
-  tem preço cadastrado; os demais reportam custo zero.
+- **Nem todo modelo Gemini 3.x está na tabela de preços.** `gemini-2.5-flash-image`
+  (flat) e `gemini-3.1-flash-image` (por tier de tamanho, `PRICING_BY_SIZE`) têm
+  preço cadastrado; demais modelos 3.x reportam custo zero até serem verificados
+  e adicionados.
 - **`pipx install --force -e .` não re-resolve dependências** em ambiente virtual já
   existente. Ao adicionar dependência, `pipx uninstall` antes de reinstalar.
 

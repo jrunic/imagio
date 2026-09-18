@@ -63,6 +63,8 @@ def save_image(image: GeneratedImage, output: Path, formato: str) -> Path:
             pil.save(output, format="JPEG", quality=95)
         elif formato == "webp":
             pil.save(output, format="WEBP", quality=95)
+        elif formato == "png":
+            pil.save(output, format="PNG")
         else:  # pragma: no cover — typer já validou antes
             raise ValueError(f"Formato não suportado: {formato}")
 

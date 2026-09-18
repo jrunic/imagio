@@ -42,3 +42,16 @@ def test_lookup_cost_flat_minimax():
 def test_lookup_cost_flat_modelo_ausente():
     """Modelo ausente em backend flat → 0.0."""
     assert lookup_cost("minimax", "modelo-inexistente", 1024, 1024) == 0.0
+
+
+def test_lookup_cost_por_tamanho_varia():
+    """gemini-3.1-flash-image cobra por tier: 2K custa mais que 1K."""
+    preco_1k = lookup_cost("gemini", "gemini-3.1-flash-image", 1024, 1024)
+    preco_2k = lookup_cost("gemini", "gemini-3.1-flash-image", 2048, 2048)
+    assert preco_1k > 0.0
+    assert preco_2k > preco_1k
+
+
+def test_lookup_cost_por_tamanho_nao_tabelado_e_zero():
+    """Tamanho não coberto pela tabela por-tamanho → 0.0, não erro."""
+    assert lookup_cost("gemini", "gemini-3.1-flash-image", 4096, 4096) == 0.0
