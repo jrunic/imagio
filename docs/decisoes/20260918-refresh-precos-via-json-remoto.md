@@ -105,10 +105,8 @@ taxa de câmbio, rejeitando API de câmbio em tempo real com o argumento de
 
 ### Implementação
 
-- Repo `imagio`, spec em
-  `13-processos/manter-imagio/11-tarefas/20260918-spec-refresh-precos-imagio.md`
-  (fora deste repositório — documentos internos do autor, conforme
-  `## Onde o trabalho acontece` do `CONTEXTO.md`).
+- Repo `imagio`, spec em documentos internos do autor, fora deste
+  repositório, conforme `## Onde o trabalho acontece` do `CONTEXTO.md`.
 - Plano de execução (`dev-03-escreve-plano`) e implementação
   (`dev-04-desenvolve-com-tdd`) ficam para depois da revisão desta ADR e da
   spec por `dev-10-revisa-artefato`.
@@ -176,9 +174,8 @@ introduzindo a dependência.
   nomeada para preço, sem revogar aquela.
 - ADR `20260608-cli-burro-sem-fallback-backends` — mesma família de decisões
   de desenho "burro" do `imagio`; não afetada por esta ADR.
-- Spec `13-processos/manter-imagio/11-tarefas/20260918-spec-refresh-precos-imagio.md`
-  (fora do repositório) — critérios de sucesso, histórias de usuário,
-  decisões de teste e assumptions completos.
+- Spec em documentos internos do autor, fora do repositório — critérios de
+  sucesso, histórias de usuário, decisões de teste e assumptions completos.
 - Achado que motivou esta ADR: correção do bug de conversão PNG e cadastro
   do preço de `gemini-3.1-flash-image` em `pricing.py`, commit `3fae5ff`
-  (2026-09-17/18), reportado por David (agente da mentorada Renata).
+  (2026-09-17/18), reportado por um usuário externo do `imagio`.
