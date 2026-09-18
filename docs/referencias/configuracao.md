@@ -28,6 +28,26 @@ Credenciais não têm padrão embutido nem opção de linha de comando: só ambi
 O motivo de a variável de ambiente vencer o arquivo está em
 [`explicacoes/precedencia-de-configuracao.md`](../explicacoes/precedencia-de-configuracao.md).
 
+## Cache de preço remoto
+
+Além do arquivo de configuração, o `imagio` mantém um cache local do JSON de
+preços remoto:
+
+```
+$XDG_CACHE_HOME/imagio/pricing-cache.json
+```
+
+Sem `XDG_CACHE_HOME` definido, o caminho é `~/.cache/imagio/pricing-cache.json`.
+Diferente do `config.toml`, este arquivo não guarda credencial — não precisa
+de permissão restrita.
+
+| Variável | Efeito | Padrão |
+|---|---|---|
+| `IMAGIO_PRECOS_INTERVALO_DIAS` | Intervalo entre checagens automáticas do JSON remoto | `7` |
+
+Ver `imagio precos` na referência de CLI para inspecionar a origem e a idade
+do preço em uso.
+
 ## Localização do arquivo
 
 ```
