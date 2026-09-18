@@ -55,3 +55,16 @@ def test_lookup_cost_por_tamanho_varia():
 def test_lookup_cost_por_tamanho_nao_tabelado_e_zero():
     """Tamanho não coberto pela tabela por-tamanho → 0.0, não erro."""
     assert lookup_cost("gemini", "gemini-3.1-flash-image", 4096, 4096) == 0.0
+
+
+def test_lookup_cost_aceita_tabelas_customizadas():
+    flat_custom = {"fake-backend": {"fake-modelo": 1.23}}
+    assert lookup_cost("fake-backend", "fake-modelo", 100, 100, flat=flat_custom, by_size={}) == 1.23
+
+
+def test_lookup_cost_tabela_by_size_customizada_tem_precedencia_sobre_flat():
+    flat_custom = {"fake": {"m": 9.99}}
+    by_size_custom = {"fake": {"m": {(100, 100): 0.5}}}
+    assert (
+        lookup_cost("fake", "m", 100, 100, flat=flat_custom, by_size=by_size_custom) == 0.5
+    )

@@ -39,16 +39,33 @@ PRICING_BY_SIZE: dict[str, dict[str, dict[tuple[int, int], float]]] = {
 }
 
 
-def lookup_cost(backend: str, model: str, width: int, height: int) -> float:
+def lookup_cost(
+    backend: str,
+    model: str,
+    width: int,
+    height: int,
+    *,
+    flat: dict[str, dict[str, float]] | None = None,
+    by_size: dict[str, dict[str, dict[tuple[int, int], float]]] | None = None,
+) -> float:
     """Retorna custo estimado em USD para (backend, modelo, tamanho).
 
-    Verifica primeiro `PRICING_BY_SIZE` (modelos com preço por tier de
-    tamanho); cai para `PRICING_FLAT` quando o modelo não depende de tamanho.
-    Retorna 0.0 quando a combinação não está tabelada — custo desconhecido
-    ainda é reportado, não é erro.
+    `flat`/`by_size` permitem passar tabelas diferentes das embutidas no
+    pacote — usado pelo refresh remoto de preços (`pricing_remoto.py`) para
+    injetar a tabela vinda de cache ou do JSON remoto sem duplicar a lógica
+    de lookup. Sem argumento, usa as tabelas embutidas (comportamento
+    inalterado).
+
+    Verifica primeiro `by_size` (modelos com preço por tier de tamanho); cai
+    para `flat` quando o modelo não depende de tamanho. Retorna 0.0 quando a
+    combinação não está tabelada — custo desconhecido ainda é reportado, não
+    é erro.
     """
-    por_tamanho = PRICING_BY_SIZE.get(backend, {}).get(model)
+    flat_efetivo = PRICING_FLAT if flat is None else flat
+    by_size_efetivo = PRICING_BY_SIZE if by_size is None else by_size
+
+    por_tamanho = by_size_efetivo.get(backend, {}).get(model)
     if por_tamanho is not None:
         return por_tamanho.get((width, height), 0.0)
 
-    return PRICING_FLAT.get(backend, {}).get(model, 0.0)
+    return flat_efetivo.get(backend, {}).get(model, 0.0)
