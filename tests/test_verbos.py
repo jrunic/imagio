@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import UTC
+
 import pytest
 from typer.testing import CliRunner
 
@@ -280,3 +282,66 @@ def test_gerar_json_e_deterministico_sem_refresh_no_meio(fake_backend_verbos, tm
     import json as jsonlib
 
     assert jsonlib.loads(primeiro.stdout)["cost_usd"] == jsonlib.loads(segundo.stdout)["cost_usd"]
+
+
+def test_precos_mostra_origem_embutido_sem_cache_nem_rede():
+    resultado = runner.invoke(app, ["precos"])
+    assert resultado.exit_code == 0
+    assert "tabela embutida" in resultado.stdout
+    assert "nunca" in resultado.stdout
+    assert "gemini-2.5-flash-image" in resultado.stdout
+
+
+def test_precos_mostra_origem_remoto_apos_forcar(monkeypatch):
+    from imagio import pricing_remoto
+
+    def sucesso(*, etag, last_modified):
+        return pricing_remoto._RespostaHTTP(
+            mudou=True,
+            corpo={
+                "schema_version": 1,
+                "flat": {"gemini": {"modelo-forcado": 1.5}},
+                "by_size": {},
+            },
+            etag='"v1"',
+            last_modified=None,
+        )
+
+    monkeypatch.setattr(pricing_remoto, "_fazer_requisicao_condicional", sucesso)
+
+    resultado = runner.invoke(app, ["precos", "--forcar"])
+    assert resultado.exit_code == 0
+    assert "remoto (checado agora)" in resultado.stdout
+    assert "modelo-forcado" in resultado.stdout
+
+
+def test_precos_sem_forcar_nao_bate_rede(monkeypatch):
+    from datetime import datetime
+
+    from imagio import pricing_remoto
+
+    agora = datetime(2026, 9, 18, tzinfo=UTC)
+    monkeypatch.setattr(pricing_remoto, "_agora", lambda: agora)
+    pricing_remoto._gravar_cache(
+        {
+            "etag": '"v1"',
+            "last_modified": None,
+            "ultima_tentativa": agora.isoformat(),
+            "ultima_tentativa_sucesso": True,
+            "ultima_checagem_sucesso": agora.isoformat(),
+            "payload": {
+                "schema_version": 1,
+                "flat": {"gemini": {"gemini-2.5-flash-image": 0.039}},
+                "by_size": {},
+            },
+        }
+    )
+
+    def espiao(*, etag, last_modified):
+        raise AssertionError("não deveria bater rede sem --forcar e sem cache vencido")
+
+    monkeypatch.setattr(pricing_remoto, "_fazer_requisicao_condicional", espiao)
+
+    resultado = runner.invoke(app, ["precos"])
+    assert resultado.exit_code == 0
+    assert "cache local" in resultado.stdout
