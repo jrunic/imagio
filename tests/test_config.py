@@ -104,3 +104,25 @@ def test_credencial_env_vence_arquivo(monkeypatch):
 def test_credencial_de_backend_ausente_devolve_none():
     config.salvar({"credenciais": {"gemini": {"api_key": "x"}}})
     assert config.resolver_credencial("minimax", "api_key", env_var="MINIMAX_API_KEY") is None
+
+
+def test_resolver_intervalo_precos_dias_default(monkeypatch):
+    monkeypatch.delenv("IMAGIO_PRECOS_INTERVALO_DIAS", raising=False)
+    assert config.resolver_intervalo_precos_dias() == 7
+
+
+def test_resolver_intervalo_precos_dias_override(monkeypatch):
+    monkeypatch.setenv("IMAGIO_PRECOS_INTERVALO_DIAS", "3")
+    assert config.resolver_intervalo_precos_dias() == 3
+
+
+def test_resolver_intervalo_precos_dias_valor_invalido_cai_no_default(monkeypatch):
+    monkeypatch.setenv("IMAGIO_PRECOS_INTERVALO_DIAS", "não-é-número")
+    assert config.resolver_intervalo_precos_dias() == 7
+
+
+def test_resolver_intervalo_precos_dias_valor_zero_ou_negativo_cai_no_default(monkeypatch):
+    monkeypatch.setenv("IMAGIO_PRECOS_INTERVALO_DIAS", "0")
+    assert config.resolver_intervalo_precos_dias() == 7
+    monkeypatch.setenv("IMAGIO_PRECOS_INTERVALO_DIAS", "-5")
+    assert config.resolver_intervalo_precos_dias() == 7

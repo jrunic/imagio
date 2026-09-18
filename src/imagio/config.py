@@ -94,3 +94,21 @@ def resolver_credencial(backend: str, campo: str, *, env_var: str) -> str | None
     credenciais = carregar().get("credenciais", {})
     valor = credenciais.get(backend, {}).get(campo)
     return None if valor is None else str(valor)
+
+
+def resolver_intervalo_precos_dias() -> int:
+    """Intervalo, em dias, entre checagens automáticas do JSON remoto de preços.
+
+    Só por variável de ambiente — não participa da cascata flag/arquivo:
+    não há flag por comando para isso (ver ADR
+    20260918-refresh-precos-via-json-remoto). Valor ausente, não-numérico ou
+    não-positivo cai no default.
+    """
+    bruto = os.getenv("IMAGIO_PRECOS_INTERVALO_DIAS")
+    if not bruto:
+        return 7
+    try:
+        valor = int(bruto)
+    except ValueError:
+        return 7
+    return valor if valor > 0 else 7
