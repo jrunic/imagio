@@ -63,6 +63,9 @@ ignore = ["B008"]  # typer.Option() em default de função é idiomático
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "rede_mockada_diretamente: teste mocka requests/responses direto, não usa o stub padrão de isola_precos_remotos",
+]
 
 [tool.mypy]
 python_version = "3.12"
