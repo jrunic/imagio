@@ -4,6 +4,7 @@ precedência e fail-open."""
 from __future__ import annotations
 
 import pytest
+import responses as resp_mock
 
 from imagio import pricing_remoto
 
@@ -66,3 +67,66 @@ def test_validar_e_converter_schema_payload_valido():
 def test_validar_e_converter_schema_rejeita_payload_invalido(payload):
     with pytest.raises(pricing_remoto.ErroDeAtualizacaoRemota):
         pricing_remoto._validar_e_converter_schema(payload)
+
+
+@pytest.mark.rede_mockada_diretamente
+@resp_mock.activate
+def test_fazer_requisicao_condicional_200_com_etag():
+    resp_mock.add(
+        resp_mock.GET,
+        pricing_remoto.URL_PRECOS,
+        json=_PAYLOAD_VALIDO,
+        status=200,
+        headers={"ETag": '"v1"'},
+    )
+    resposta = pricing_remoto._fazer_requisicao_condicional(etag=None, last_modified=None)
+    assert resposta.mudou is True
+    assert resposta.corpo == _PAYLOAD_VALIDO
+    assert resposta.etag == '"v1"'
+
+
+@pytest.mark.rede_mockada_diretamente
+@resp_mock.activate
+def test_fazer_requisicao_condicional_304_nao_mudou():
+    resp_mock.add(resp_mock.GET, pricing_remoto.URL_PRECOS, status=304)
+    resposta = pricing_remoto._fazer_requisicao_condicional(etag='"v1"', last_modified=None)
+    assert resposta.mudou is False
+    assert resposta.corpo is None
+
+
+@pytest.mark.rede_mockada_diretamente
+@resp_mock.activate
+def test_fazer_requisicao_condicional_envia_if_none_match_quando_ha_etag():
+    resp_mock.add(resp_mock.GET, pricing_remoto.URL_PRECOS, status=304)
+    pricing_remoto._fazer_requisicao_condicional(etag='"v1"', last_modified=None)
+    assert resp_mock.calls[0].request.headers["If-None-Match"] == '"v1"'
+
+
+@pytest.mark.rede_mockada_diretamente
+@resp_mock.activate
+def test_fazer_requisicao_condicional_http_erro_levanta_excecao():
+    resp_mock.add(resp_mock.GET, pricing_remoto.URL_PRECOS, status=500)
+    with pytest.raises(pricing_remoto.ErroDeAtualizacaoRemota):
+        pricing_remoto._fazer_requisicao_condicional(etag=None, last_modified=None)
+
+
+@pytest.mark.rede_mockada_diretamente
+@resp_mock.activate
+def test_fazer_requisicao_condicional_falha_de_rede_levanta_excecao():
+    import requests
+
+    resp_mock.add(
+        resp_mock.GET,
+        pricing_remoto.URL_PRECOS,
+        body=requests.exceptions.ConnectionError("recusado"),
+    )
+    with pytest.raises(pricing_remoto.ErroDeAtualizacaoRemota):
+        pricing_remoto._fazer_requisicao_condicional(etag=None, last_modified=None)
+
+
+@pytest.mark.rede_mockada_diretamente
+@resp_mock.activate
+def test_fazer_requisicao_condicional_corpo_nao_json_levanta_excecao():
+    resp_mock.add(resp_mock.GET, pricing_remoto.URL_PRECOS, status=200, body="isso não é json")
+    with pytest.raises(pricing_remoto.ErroDeAtualizacaoRemota):
+        pricing_remoto._fazer_requisicao_condicional(etag=None, last_modified=None)

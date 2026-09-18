@@ -22,8 +22,11 @@ from __future__ import annotations
 
 import json
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+import requests
 
 # Caminho versionado por major: um cliente que não reconhece o schema de um
 # caminho nunca "cai" para uma versão velha silenciosamente — schema novo
@@ -112,3 +115,50 @@ def _validar_e_converter_schema(
         raise ErroDeAtualizacaoRemota(f"payload remoto malformado: {exc}") from exc
 
     return flat, by_size
+
+
+@dataclass(frozen=True)
+class _RespostaHTTP:
+    """Resultado normalizado de uma checagem condicional."""
+
+    mudou: bool  # False quando o servidor respondeu 304
+    corpo: Any  # dict JSON quando mudou=True; None quando mudou=False
+    etag: str | None
+    last_modified: str | None
+
+
+def _fazer_requisicao_condicional(*, etag: str | None, last_modified: str | None) -> _RespostaHTTP:
+    """Faz a checagem condicional contra `URL_PRECOS`.
+
+    Ponto de costura de rede — a precedência (Task 5) e todo teste de CLI
+    substituem esta função inteira em vez de mockar `requests`, para que
+    nenhum teste que não decorou explicitamente com `responses` bata rede
+    real (ver fixture `isola_precos_remotos` em `tests/conftest.py`).
+    """
+    headers = {}
+    if etag:
+        headers["If-None-Match"] = etag
+    elif last_modified:
+        headers["If-Modified-Since"] = last_modified
+
+    try:
+        resposta = requests.get(URL_PRECOS, headers=headers, timeout=TIMEOUT_SEGUNDOS)
+    except requests.exceptions.RequestException as exc:
+        raise ErroDeAtualizacaoRemota(f"falha de rede: {exc}") from exc
+
+    if resposta.status_code == 304:
+        return _RespostaHTTP(mudou=False, corpo=None, etag=etag, last_modified=last_modified)
+    if resposta.status_code != 200:
+        raise ErroDeAtualizacaoRemota(f"HTTP {resposta.status_code} de {URL_PRECOS}")
+
+    try:
+        corpo = resposta.json()
+    except ValueError as exc:
+        raise ErroDeAtualizacaoRemota(f"corpo não é JSON válido: {exc}") from exc
+
+    return _RespostaHTTP(
+        mudou=True,
+        corpo=corpo,
+        etag=resposta.headers.get("ETag"),
+        last_modified=resposta.headers.get("Last-Modified"),
+    )
