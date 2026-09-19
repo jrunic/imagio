@@ -233,7 +233,7 @@ saída estruturada, e cada ramo da cascata de precedência.
 - [ ] Biblioteca nova tem ADR em `docs/decisoes/`
 - [ ] `CONTEXTO.md` atualizado se o padrão técnico mudou
 - [ ] Se `pricing.py` (tabela embutida) mudou, o JSON remoto em
-      `jedilabs.com.br` foi atualizado também — ou a divergência foi
+      `imagio.jedilabs.com.br` foi atualizado também — ou a divergência foi
       registrada como pendência com dono e prazo
 
 ## Débito conhecido
@@ -245,7 +245,7 @@ saída estruturada, e cada ramo da cascata de precedência.
   modelos reportam custo zero até serem adicionados. A partir do refresh remoto
   (ADR `20260918-refresh-precos-via-json-remoto.md`), a tabela embutida em
   `pricing.py` é só o piso de última instância — o preço corrente vem do JSON
-  publicado em `jedilabs.com.br`; cadastrar um modelo só no código e esquecer o
+  publicado em `imagio.jedilabs.com.br`; cadastrar um modelo só no código e esquecer o
   JSON remoto reproduz o problema que a feature existe para resolver.
 - **`pipx install --force -e .` não re-resolve dependências** em ambiente virtual já
   existente. Ao adicionar dependência, `pipx uninstall` antes de reinstalar.

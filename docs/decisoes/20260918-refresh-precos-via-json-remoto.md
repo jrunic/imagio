@@ -7,7 +7,7 @@ data: 2026-09-18
 escopo: repo:imagio
 plataforma: "*"
 dominios: [tecnologia]
-descricao: "ADR — refresh de preços via JSON remoto hospedado em jedilabs.com.br"
+descricao: "ADR — refresh de preços via JSON remoto hospedado em imagio.jedilabs.com.br"
 tags: [adr, decisao, imagio, pricing]
 ---
 
@@ -39,7 +39,7 @@ taxa de câmbio, rejeitando API de câmbio em tempo real com o argumento de
 
 1. O `imagio` passa a consultar, periodicamente (default 7 dias) e sob
    demanda, um JSON de preços hospedado pelo mantenedor em infraestrutura
-   própria (Cloudflare, domínio `jedilabs.com.br`) — não uma API de
+   própria (Cloudflare, domínio `imagio.jedilabs.com.br`) — não uma API de
    terceiro.
 2. A consulta é condicional (`ETag`/`If-None-Match` ou
    `Last-Modified`/`If-Modified-Since`): só baixa o corpo quando o conteúdo
@@ -88,7 +88,7 @@ taxa de câmbio, rejeitando API de câmbio em tempo real com o argumento de
   chamada de rede adicional" que orientou o desenho original (ADR de
   câmbio). A mitigação é a precedência de fail-open, não a ausência da
   dependência.
-- `imagio` passa a depender de `jedilabs.com.br` permanecer publicado
+- `imagio` passa a depender de `imagio.jedilabs.com.br` permanecer publicado
   enquanto houver usuário ativo do CLI no mundo — inclusive mentorados sem
   qualquer vínculo direto com o Jedi Labs além de terem instalado a
   ferramenta um dia. Isso é um compromisso operacional do mantenedor, não
@@ -124,7 +124,7 @@ largura, altura), consumido por `lookup_cost()`.
   `20260608-taxa-cambio-fixa-usd-brl-imagio` não é revista.
 - Qualquer outro dado do `imagio` (config, credencial, preferência) — só
   preço passa a ter fonte remota.
-- Publicação do JSON em `jedilabs.com.br` do lado do mantenedor (deploy,
+- Publicação do JSON em `imagio.jedilabs.com.br` do lado do mantenedor (deploy,
   detecção de drift de preço contra os provedores) — processo separado,
   fora deste repositório e desta ADR.
 - Fallback entre backends de geração — segue coberto pela ADR
