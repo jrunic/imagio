@@ -36,7 +36,7 @@ from imagio.pricing import PRICING_BY_SIZE, PRICING_FLAT
 # Caminho versionado por major: um cliente que não reconhece o schema de um
 # caminho nunca "cai" para uma versão velha silenciosamente — schema novo
 # vive em v2.json, publicado à parte, nunca no lugar do v1.
-URL_PRECOS = "https://jedilabs.com.br/imagio/precos/v1.json"
+URL_PRECOS = "https://imagio.jedilabs.com.br/precos/v1.json"
 SCHEMA_VERSION_ESPERADO = 1
 # Tupla (conexão, leitura): requests aplica cada valor separadamente, então o
 # pior caso é a SOMA dos dois — 1.5s garante folga contra o critério de
