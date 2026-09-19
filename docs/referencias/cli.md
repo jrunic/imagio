@@ -6,7 +6,7 @@ status: ativo
 escopo: repo:imagio
 plataforma: "*"
 dominios: [tecnologia]
-descricao: "Catálogo dos cinco verbos da CLI imagio, suas opções, códigos de saída e formato de saída"
+descricao: "Catálogo dos seis verbos da CLI imagio, suas opções, códigos de saída e formato de saída"
 tags: [referencia, cli, verbos, comandos]
 ---
 
@@ -27,6 +27,7 @@ Invocação sem argumento imprime a ajuda.
 | `instalar` | Verifica pré-requisitos do ambiente e conduz a configuração inicial. |
 | `atualizar` | Reinstala a última versão publicada. |
 | `versao` | Imprime a versão instalada. |
+| `precos` | Mostra a tabela de preço em uso, a origem e a idade da última checagem. |
 
 ---
 
@@ -170,6 +171,30 @@ imagio versao
 
 Imprime a versão do pacote instalado e sai com código 0. Executado a partir do
 código-fonte sem instalação, imprime `desconhecida`.
+
+---
+
+## `imagio precos`
+
+```
+imagio precos [OPTIONS]
+```
+
+Mostra a tabela de preço em uso (uma linha por combinação backend/modelo, ou
+backend/modelo/tamanho para modelos com preço por tier), a origem (`remoto`,
+`cache local` ou `tabela embutida no pacote`) e a data da última checagem
+bem-sucedida.
+
+### Opções
+
+| Flag | Efeito |
+|---|---|
+| `--forcar` | Ignora o período de checagem (`IMAGIO_PRECOS_INTERVALO_DIAS`) e consulta o JSON remoto imediatamente. |
+
+### Códigos de saída
+
+`0` sempre — este verbo não falha por causa de rede indisponível; nesse
+caso, mostra a origem `tabela embutida no pacote` em vez de abortar.
 
 ---
 

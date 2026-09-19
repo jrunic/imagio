@@ -18,6 +18,7 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
+from imagio import pricing_remoto
 from imagio.backends import get_backend
 from imagio.backends.base import SizeNotSupportedError
 from imagio.config import carregar, resolver_preferencia, salvar
@@ -125,8 +126,15 @@ def gerar(  # noqa: PLR0913 — CLI tem várias flags por design
 
     modelo_usado = modelo or backend_impl.default_model
 
-    # Custo estimado é consultado localmente — sem chamada extra à API.
-    cost_usd = lookup_cost(backend, modelo_usado, width, height)
+    resultado_precos = pricing_remoto.obter_tabelas()
+    cost_usd = lookup_cost(
+        backend,
+        modelo_usado,
+        width,
+        height,
+        flat=resultado_precos.flat,
+        by_size=resultado_precos.by_size,
+    )
     cost_brl = usd_to_brl(cost_usd)
 
     # Linha de progresso: omitida em modo --json para manter stdout parseável.
@@ -324,6 +332,44 @@ def versao() -> None:
     except PackageNotFoundError:
         # Rodando do código-fonte sem instalar — não é erro.
         print("desconhecida")
+
+
+_ORIGEM_LEGIVEL: dict[str, str] = {
+    "remoto": "remoto (checado agora)",
+    "cache": "cache local",
+    "embutido": "tabela embutida no pacote",
+}
+
+
+@app.command("precos")
+def precos(
+    forcar: Annotated[
+        bool,
+        typer.Option(
+            "--forcar",
+            help="Ignora o período de checagem e consulta o JSON remoto agora.",
+        ),
+    ] = False,
+) -> None:
+    """Mostra a tabela de preço em uso e a idade da última checagem."""
+    resultado = pricing_remoto.obter_tabelas(forcar=forcar)
+
+    console.print(f"[bold]Origem:[/bold] {_ORIGEM_LEGIVEL[resultado.origem]}")
+    if resultado.verificado_em is not None:
+        console.print(
+            f"[bold]Última checagem bem-sucedida:[/bold] {resultado.verificado_em.isoformat()}"
+        )
+    else:
+        console.print("[bold]Última checagem bem-sucedida:[/bold] nunca")
+    console.print()
+
+    for backend_nome, modelos_flat in sorted(resultado.flat.items()):
+        for modelo_nome, preco in sorted(modelos_flat.items()):
+            console.print(f"  {backend_nome}/{modelo_nome}: USD {preco:.3f} (fixo)")
+    for backend_nome, modelos_by_size in sorted(resultado.by_size.items()):
+        for modelo_nome, tamanhos in sorted(modelos_by_size.items()):
+            for (largura, altura), preco in sorted(tamanhos.items()):
+                console.print(f"  {backend_nome}/{modelo_nome} {largura}x{altura}: USD {preco:.3f}")
 
 
 if __name__ == "__main__":

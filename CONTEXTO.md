@@ -64,7 +64,7 @@ não decide estilo. Toda a inteligência de composição vive em quem chama.
 
 ```
 src/imagio/
-├── cli.py              ← Typer app: os cinco verbos
+├── cli.py              ← Typer app: os seis verbos
 ├── config.py           ← cascata de precedência e arquivo do usuário
 ├── backends/
 │   ├── __init__.py     ← registry (auto-importa os backends)
@@ -72,7 +72,8 @@ src/imagio/
 │   ├── registry.py     ← register / get_backend / list_backends
 │   ├── gemini.py
 │   └── minimax.py
-├── pricing.py          ← tabela de preços + lookup_cost
+├── pricing.py          ← tabela de preços embutida (fallback) + lookup_cost
+├── pricing_remoto.py   ← refresh de preço via JSON remoto: cache, precedência, fail-open
 └── output.py           ← save_image + emit_summary + usd_to_brl
 
 tests/
@@ -80,6 +81,8 @@ tests/
 ├── test_verbos.py      ← demais verbos e cascata vista de fora
 ├── test_config.py      ← cascata, permissão, idempotência
 ├── test_pricing.py
+├── test_pricing_remoto.py
+├── test_conftest_isolamento.py
 ├── test_output.py
 └── backends/
     ├── test_gemini.py
@@ -229,13 +232,21 @@ saída estruturada, e cada ramo da cascata de precedência.
 - [ ] Mensagem de erro do CLI em português
 - [ ] Biblioteca nova tem ADR em `docs/decisoes/`
 - [ ] `CONTEXTO.md` atualizado se o padrão técnico mudou
+- [ ] Se `pricing.py` (tabela embutida) mudou, o JSON remoto em
+      `imagio.jedilabs.com.br` foi atualizado também — ou a divergência foi
+      registrada como pendência com dono e prazo
 
 ## Débito conhecido
 
 - **MiniMax nunca foi validado contra a API real.** O backend está implementado com
   tratamento de `base_resp`, mas nenhuma geração de verdade foi confirmada.
-- **Modelos Gemini 3.x não estão na tabela de preços.** Só `gemini-2.5-flash-image`
-  tem preço cadastrado; os demais reportam custo zero.
+- **Nem todo modelo tem preço cadastrado no JSON remoto nem na tabela embutida.**
+  `gemini-2.5-flash-image` e `gemini-3.1-flash-image` têm preço cadastrado; demais
+  modelos reportam custo zero até serem adicionados. A partir do refresh remoto
+  (ADR `20260918-refresh-precos-via-json-remoto.md`), a tabela embutida em
+  `pricing.py` é só o piso de última instância — o preço corrente vem do JSON
+  publicado em `imagio.jedilabs.com.br`; cadastrar um modelo só no código e esquecer o
+  JSON remoto reproduz o problema que a feature existe para resolver.
 - **`pipx install --force -e .` não re-resolve dependências** em ambiente virtual já
   existente. Ao adicionar dependência, `pipx uninstall` antes de reinstalar.
 

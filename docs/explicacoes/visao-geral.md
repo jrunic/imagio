@@ -69,9 +69,15 @@ O registro completo dessa decisão está em
 
 ## Por que o custo aparece em toda geração
 
-Cada linha de resumo traz o custo estimado da operação, em dólar e em real. É estimativa
-local, consultada numa tabela do próprio código — não há chamada extra à API nem consulta
-a serviço de câmbio.
+Cada linha de resumo traz o custo estimado da operação, em dólar e em real. A tabela de
+preço em USD é atualizada periodicamente a partir de um JSON publicado pelo mantenedor
+(no máximo uma vez por semana, ou sob demanda via `imagio precos --forcar`) — é a única
+chamada de rede do `imagio` fora do backend de geração escolhido, e ela nunca bloqueia uma
+geração: sem rede, o `imagio` usa o último preço em cache ou a tabela embutida no pacote.
+Detalhe completo na ADR
+[`decisoes/20260918-refresh-precos-via-json-remoto.md`](../decisoes/20260918-refresh-precos-via-json-remoto.md).
+A conversão para reais continua sem chamada de rede: taxa fixa configurável, sem consulta a
+serviço de câmbio.
 
 A razão é dar visibilidade orçamentária a uma operação que, ao contrário da maioria dos
 comandos de terminal, gasta dinheiro a cada execução. Um número aproximado impresso

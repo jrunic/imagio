@@ -18,13 +18,14 @@ Mapa de navegação. Aponta para onde cada coisa vive; o conteúdo está nos des
 
 | Módulo | Responsabilidade |
 |---|---|
-| `cli.py` | Os cinco verbos. Parse de argumentos, validação ergonômica, política de nova tentativa, orquestração. |
+| `cli.py` | Os seis verbos. Parse de argumentos, validação ergonômica, política de nova tentativa, orquestração. |
 | `config.py` | Cascata de precedência e acesso ao arquivo de configuração do usuário. |
 | `backends/base.py` | Protocolo `Backend` e hierarquia de exceções. |
 | `backends/registry.py` | Mapa nome → implementação. |
 | `backends/gemini.py` | Google Gemini, via `google-genai`. |
 | `backends/minimax.py` | MiniMax, via REST direto. |
-| `pricing.py` | Tabela de preços e consulta de custo. |
+| `pricing.py` | Tabela de preços embutida (fallback) e consulta de custo. |
+| `pricing_remoto.py` | Refresh de preço via JSON remoto — cache, checagem condicional, fail-open. |
 | `output.py` | Salvamento do arquivo, conversão de formato e linha de resumo. |
 
 ## Onde procurar
